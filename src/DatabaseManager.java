@@ -5,9 +5,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseManager {
+    
+    public static String getResultString(String statementSQL) {
 
-    public void getResultString(String statementSQL) {
-
+        String retString = "";
+        
         // variables
         Connection connection = null;
         Statement statement = null;
@@ -28,7 +30,7 @@ public class DatabaseManager {
         // Step 2: Opening database connection
         try {
 
-            String msAccDB = "\"jdbc:ucanaccess://.\\\\mydb.accdb\"";
+            String msAccDB = "GroceryManager.accdb";
             String dbURL = "jdbc:ucanaccess://" + msAccDB; 
 
             // Step 2.A: Create and get connection using DriverManager class
@@ -40,15 +42,11 @@ public class DatabaseManager {
             // Step 2.C: Executing SQL & retrieve data into ResultSet
             resultSet = statement.executeQuery(statementSQL);
 
-            System.out.println("ID\tName\t\t\tAge\tMatches");
-            System.out.println("==\t================\t===\t=======");
-
             // processing returned data and printing into console
             while(resultSet.next()) {
-                System.out.println(resultSet.getInt(1) + "\t" + 
-                        resultSet.getString(2) + "\t" + 
-                        resultSet.getString(3) + "\t" +
-                        resultSet.getString(4));
+                retString  += resultSet.getInt(1) + " "
+                            + resultSet.getString(2) + " "
+                            + resultSet.getString(3);
             }
         }
         catch(SQLException sqlex){
@@ -72,5 +70,7 @@ public class DatabaseManager {
                 sqlex.printStackTrace();
             }
         }
+        
+        return retString;
     }
 }
