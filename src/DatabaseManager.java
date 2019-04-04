@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -22,7 +23,7 @@ public class DatabaseManager {
         }
         catch(ClassNotFoundException cnfex) {
 
-            System.out.println("Problem in loading or "
+            System.err.println("Problem in loading or "
                     + "registering MS Access JDBC driver");
             cnfex.printStackTrace();
         }
@@ -42,11 +43,16 @@ public class DatabaseManager {
             // Step 2.C: Executing SQL & retrieve data into ResultSet
             resultSet = statement.executeQuery(statementSQL);
 
-            // processing returned data and printing into console
+            // 
             while(resultSet.next()) {
+                /*
                 retString  += resultSet.getInt(1) + " "
                             + resultSet.getString(2) + " "
                             + resultSet.getString(3);
+                */
+                boolean allColumnsChecked = false;
+                int column = 1;
+                
             }
         }
         catch(SQLException sqlex){
@@ -72,5 +78,24 @@ public class DatabaseManager {
         }
         
         return retString;
+    }
+    
+    public static int checkColumnNumber(ResultSet resultSet) throws SQLException {
+        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        int columns = resultSetMetaData.getColumnCount();
+        
+        return columns;
+    }
+    
+    public static String checkColumnType(ResultSet resultSet, int column) throws SQLException {
+        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        System.out.println(resultSetMetaData.getColumnType(column));
+        String type;
+        
+        switch(resultSetMetaData.getColumnType(column)) {
+            case -9: type = "NVARCHAR"; break;
+            case 4: type = "INTEGER"; break;
+            case 8: type = "DOUBLE"; break;
+        }
     }
 }
