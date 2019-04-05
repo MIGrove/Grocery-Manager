@@ -4,13 +4,41 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DatabaseManager {
     
-    public static String getResultString(String statementSQL) {
-
-        String retString = "";
+    static ArrayList<String> resStrings = new ArrayList<>();
+    static ArrayList<Integer> resIntegers = new ArrayList<>();
+    static ArrayList<Double> resDoubles = new ArrayList<>();
+    static String statementSQL;
+    
+    public DatabaseManager (String statementSQL) {
+        DatabaseManager.statementSQL = statementSQL;
+        getResults();
+    }
+    
+    /*
+    have one of these (the below function) for all three types of arraylists.
+    these should give the results back to the user one data item by one, when
+    they choose to use it/them.
+    */
+    
+    private String getResultString(int index) {
+        return resStrings.get(index);
+    }
+    
+    private int getResultInt(int index) {
+        return resIntegers.get(index);
+    }
+    
+    private double getResultDouble(int index) {
+        return resDoubles.get(index);
+    }
         
+    
+    private static void getResults() {
+
         // variables
         Connection connection = null;
         Statement statement = null;
@@ -45,6 +73,27 @@ public class DatabaseManager {
 
             // 
             while(resultSet.next()) {
+                int columns = getTotalColumns(resultSet);
+                
+                for (int i=1; i<=columns; i++) {
+                    switch (getColumnType(resultSet, i)) {
+                        case "NVARCHAR":
+                            resStrings.add(resultSet.getString(i));
+                            break;
+                        
+                        case "INTEGER":
+                            resIntegers.add(resultSet.getInt(i));
+                            break;
+                            
+                        case "DOUBLE":
+                            resDoubles.add(resultSet.getDouble(i));
+                            break;
+                            
+                        default:
+                            System.err.println("Column type is not compatible");
+                            break;
+                    }
+                }
                 /*
                 retString  += resultSet.getInt(1) + " "
                             + resultSet.getString(2) + " "
@@ -76,26 +125,26 @@ public class DatabaseManager {
                 sqlex.printStackTrace();
             }
         }
-        
-        return retString;
     }
     
-    public static int checkColumnNumber(ResultSet resultSet) throws SQLException {
+    public static int getTotalColumns(ResultSet resultSet) throws SQLException {
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
         int columns = resultSetMetaData.getColumnCount();
         
         return columns;
     }
     
-    public static String checkColumnType(ResultSet resultSet, int column) throws SQLException {
+    public static String getColumnType(ResultSet resultSet, int column) throws SQLException {
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
         System.out.println(resultSetMetaData.getColumnType(column));
-        String type;
+        String type = "";
         
         switch(resultSetMetaData.getColumnType(column)) {
             case -9: type = "NVARCHAR"; break;
             case 4: type = "INTEGER"; break;
             case 8: type = "DOUBLE"; break;
         }
+        
+        return type;
     }
 }

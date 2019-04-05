@@ -178,7 +178,11 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField_PasswordFocusLost
 
     private void jButton_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_LoginActionPerformed
-        // TODO add your handling code here:
+        String username = jTextField_Username.getText();
+        String password = jTextField_Password.getText();
+        
+        //if (username.equalsIgnoreCase("username") | username.equalsIgnoreCase("")
+        //        | password.equalsIgnoreCase(username))
     }//GEN-LAST:event_jButton_LoginActionPerformed
 
     /**
