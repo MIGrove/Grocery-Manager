@@ -24,15 +24,15 @@ public class DatabaseManager {
     they choose to use it/them.
     */
     
-    private String getResultString(int index) {
+    public String getResultString(int index) {
         return resStrings.get(index);
     }
     
-    private int getResultInt(int index) {
+    public int getResultInt(int index) {
         return resIntegers.get(index);
     }
     
-    private double getResultDouble(int index) {
+    public double getResultDouble(int index) {
         return resDoubles.get(index);
     }
         
