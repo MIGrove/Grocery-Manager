@@ -1,12 +1,16 @@
 public class testClass {
-    public static void main(String[] args) {
+    public static void main(String args[]) {
         
-        String statement = "SELECT * FROM tblItems;";
-        DatabaseManager dbMan = new DatabaseManager(statement);
+        DatabaseManager dbMan = new DatabaseManager();
         
-        int itemID = dbMan.getResultInt(0);
-        String itemName = dbMan.getResultString(0);
+        //testing single string output
+        System.out.println(dbMan.getString("SELECT * FROM tblItems", 3, 1));
+        System.out.println(dbMan.getString("SELECT * FROM tblItems", 3, 2));
+        System.out.println(dbMan.getString("SELECT * FROM tblStores", 2, 1));
         
-        System.out.println(itemID + "\t" + itemName);
+        //testing multiple string output
+        System.out.println(dbMan.getRow("SELECT * FROM tblItems", 1));
+        System.out.println(dbMan.getRow("SELECT * FROM tblItems", 2));
+        System.out.println(dbMan.getRow("SELECT * FROM tblStores WHERE StoreName = 'Woolworths';", 1));
     }
 }

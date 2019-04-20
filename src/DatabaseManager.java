@@ -5,146 +5,139 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
+ 
 public class DatabaseManager {
     
-    static ArrayList<String> resStrings = new ArrayList<>();
-    static ArrayList<Integer> resIntegers = new ArrayList<>();
-    static ArrayList<Double> resDoubles = new ArrayList<>();
-    static String statementSQL;
+    static Connection connection = null;
+    static Statement statement = null;
     
-    public DatabaseManager (String statementSQL) {
-        DatabaseManager.statementSQL = statementSQL;
-        getResults();
+    public DatabaseManager() {
+        this.register();
     }
     
-    /*
-    have one of these (the below function) for all three types of arraylists.
-    these should give the results back to the user one data item by one, when
-    they choose to use it/them.
-    */
-    
-    public String getResultString(int index) {
-        return resStrings.get(index);
-    }
-    
-    public int getResultInt(int index) {
-        return resIntegers.get(index);
-    }
-    
-    public double getResultDouble(int index) {
-        return resDoubles.get(index);
-    }
+    public String getString(String query, int column, int row) {
+        String resultString = "errorString";
+        this.connect();
         
-    
-    private static void getResults() {
-
-        // variables
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-
-        // Step 1: Loading or registering Oracle JDBC driver class
         try {
-
-            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-        }
-        catch(ClassNotFoundException cnfex) {
-
-            System.err.println("Problem in loading or "
-                    + "registering MS Access JDBC driver");
-            cnfex.printStackTrace();
-        }
-
-        // Step 2: Opening database connection
-        try {
-
-            String msAccDB = "GroceryManager.accdb";
-            String dbURL = "jdbc:ucanaccess://" + msAccDB; 
-
-            // Step 2.A: Create and get connection using DriverManager class
-            connection = DriverManager.getConnection(dbURL); 
-
-            // Step 2.B: Creating JDBC Statement 
-            statement = connection.createStatement();
-
-            // Step 2.C: Executing SQL & retrieve data into ResultSet
-            resultSet = statement.executeQuery(statementSQL);
-
-            // 
-            while(resultSet.next()) {
-                int columns = getTotalColumns(resultSet);
-                
-                for (int i=1; i<=columns; i++) {
-                    switch (getColumnType(resultSet, i)) {
-                        case "NVARCHAR":
-                            resStrings.add(resultSet.getString(i));
-                            break;
-                        
-                        case "INTEGER":
-                            resIntegers.add(resultSet.getInt(i));
-                            break;
-                            
-                        case "DOUBLE":
-                            resDoubles.add(resultSet.getDouble(i));
-                            break;
-                            
-                        default:
-                            System.err.println("Column type is not compatible");
-                            break;
-                    }
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            if (resultSet.next()) {
+                for(int i = 1; i <= row - 1; i++) {
+                    resultSet.next();
                 }
-                /*
-                retString  += resultSet.getInt(1) + " "
-                            + resultSet.getString(2) + " "
-                            + resultSet.getString(3);
-                */
-                boolean allColumnsChecked = false;
-                int column = 1;
-                
+                resultString = resultSet.getString(column);
             }
+            
+            this.close(resultSet, statement, connection);
         }
-        catch(SQLException sqlex){
+        catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
-        finally {
-
-            // Step 3: Closing database connection
-            try {
-                if(null != connection) {
-
-                    // cleanup resources, once after processing
-                    resultSet.close();
-                    statement.close();
-
-                    // and then finally close connection
-                    connection.close();
+        
+        return resultString;
+    }
+    
+    public ArrayList<String> getRow(String query, int row) {
+        ArrayList<String> resultArray = new ArrayList<>();
+        this.connect();
+        
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            if (resultSet.next()) {
+                for(int i = 1; i <= row - 1; i++) {
+                    resultSet.next();
+                }
+                //resultString = resultSet.getString(column);
+                
+                ResultSetMetaData rsmd = resultSet.getMetaData();
+                int numColumns = rsmd.getColumnCount();
+                
+                for (int i = 1; i <= numColumns; i++) {
+                    resultArray.add(resultSet.getString(i));
                 }
             }
-            catch (SQLException sqlex) {
-                sqlex.printStackTrace();
-            }
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        return resultArray;
+    }
+    
+    
+    public void register() {
+        try {
+            Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+        }
+        catch (ClassNotFoundException cnfex) {
+            System.err.println("Problem loading/registering MS Access JDBC driver");
+            cnfex.printStackTrace();
         }
     }
     
-    public static int getTotalColumns(ResultSet resultSet) throws SQLException {
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        int columns = resultSetMetaData.getColumnCount();
+    //default connect method uses GroceryManager database
+    public void connect() {
+        String msAccDB = "GroceryManager.accdb";
+        String dbURL = "jdbc:ucanaccess://" + msAccDB;
         
-        return columns;
+        try {
+            connection = DriverManager.getConnection(dbURL);
+            statement = connection.createStatement();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
     }
     
-    public static String getColumnType(ResultSet resultSet, int column) throws SQLException {
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        System.out.println(resultSetMetaData.getColumnType(column));
-        String type = "";
+    public void connect(String msAccDB) {
+        String dbURL = "jdbc:ucanaccess://" + msAccDB;
         
-        switch(resultSetMetaData.getColumnType(column)) {
-            case -9: type = "NVARCHAR"; break;
-            case 4: type = "INTEGER"; break;
-            case 8: type = "DOUBLE"; break;
+        try {
+            connection = DriverManager.getConnection(dbURL);
+            statement = connection.createStatement();
         }
-        
-        return type;
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        } 
+    }
+    
+    public void close(ResultSet resultSet) {
+        try {
+            resultSet.close();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+    }
+    
+    public void close(Statement statement) {
+        try {
+            statement.close();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+    }
+    
+    public void close(Connection connection) {
+        try {
+            connection.close();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+    }
+    
+    public void close(ResultSet resultSet, Statement statement, Connection connection) {
+        try {
+            resultSet.close();
+            statement.close();
+            connection.close();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
     }
 }
