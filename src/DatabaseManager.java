@@ -8,11 +8,19 @@ import java.util.ArrayList;
  
 public class DatabaseManager {
     
+    private static String msAccDB = "";
+    
     static Connection connection = null;
     static Statement statement = null;
     
     public DatabaseManager() {
         this.register();
+        this.msAccDB = "GroceryManager.accdb";
+    }
+    
+    public DatabaseManager(String msAccDB) {
+        this.register();
+        this.msAccDB = msAccDB;
     }
     
     public String getString(String query, int column, int row) {
@@ -49,12 +57,8 @@ public class DatabaseManager {
                 for(int i = 1; i <= row - 1; i++) {
                     resultSet.next();
                 }
-                //resultString = resultSet.getString(column);
                 
-                ResultSetMetaData rsmd = resultSet.getMetaData();
-                int numColumns = rsmd.getColumnCount();
-                
-                for (int i = 1; i <= numColumns; i++) {
+                for (int i = 1; i <= getNumColumns(resultSet); i++) {
                     resultArray.add(resultSet.getString(i));
                 }
             }
@@ -66,6 +70,75 @@ public class DatabaseManager {
         return resultArray;
     }
     
+    public int getNumColumns(ResultSet resultSet) {
+        int resultInt = -1;
+        
+        try {
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            resultInt = rsmd.getColumnCount();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        return resultInt;
+    }
+    
+    public int getNumColumns(String query) {
+        int resultInt = -1;
+        this.connect();
+        
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            resultInt = rsmd.getColumnCount();
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        return resultInt;
+    }
+    
+    public int getNumRows(ResultSet resultSet) {
+        int resultInt = 0;
+        
+        try {
+            while (resultSet.next()) {
+                resultInt++;
+            }
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        if (resultInt == 0) {
+            System.out.println("No rows found!");
+        }
+        
+        return resultInt;
+    }
+    
+    public int getNumRows(String query) {
+        int resultInt = 0;
+        
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+            
+            while (resultSet.next()) {
+                resultInt++;
+            }
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        if (resultInt == 0) {
+            System.out.println("No rows found!");
+        }
+        
+        return resultInt;
+    }
     
     public void register() {
         try {
@@ -79,7 +152,6 @@ public class DatabaseManager {
     
     //default connect method uses GroceryManager database
     public void connect() {
-        String msAccDB = "GroceryManager.accdb";
         String dbURL = "jdbc:ucanaccess://" + msAccDB;
         
         try {
@@ -89,18 +161,6 @@ public class DatabaseManager {
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
-    }
-    
-    public void connect(String msAccDB) {
-        String dbURL = "jdbc:ucanaccess://" + msAccDB;
-        
-        try {
-            connection = DriverManager.getConnection(dbURL);
-            statement = connection.createStatement();
-        }
-        catch (SQLException sqlex) {
-            sqlex.printStackTrace();
-        } 
     }
     
     public void close(ResultSet resultSet) {

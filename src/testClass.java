@@ -12,5 +12,9 @@ public class testClass {
         System.out.println(dbMan.getRow("SELECT * FROM tblItems", 1));
         System.out.println(dbMan.getRow("SELECT * FROM tblItems", 2));
         System.out.println(dbMan.getRow("SELECT * FROM tblStores WHERE StoreName = 'Woolworths';", 1));
+        
+        //testing TableModelMaker class
+        TableModelMaker tableModelMaker = new TableModelMaker();
+        System.out.println(tableModelMaker.convertTableTo2DArray("SELECT * FROM tblItems", "GroceryManager.accdb"));
     }
 }
