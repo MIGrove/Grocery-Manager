@@ -1,28 +1,31 @@
 import javax.swing.*;
 
 public class LocatorWindow_new {
-    public static void main(String[] args) {
+    JFrame mainFrame;
+    
+    public LocatorWindow_new() {
+        mainFrame = new JFrame("Locator");
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(250, 250);
         
-        //frame
-        JFrame frame = new JFrame("Chat panel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        
-        //creating MenuBar and adding components
+        //menu bar
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu0 = new JMenu("file");
-        JMenu menu1 = new JMenu("help");
+        JMenu usersMenu = new JMenu("Users");
+        JMenu settingsMenu = new JMenu("Settings");
         
-        menuBar.add(menu0);
-        menuBar.add(menu1);
+        menuBar.add(usersMenu);
+        menuBar.add(settingsMenu);
         
-        JMenuItem m0 = new JMenuItem("open");
-        JMenuItem m1 = new JMenuItem("save as");
-        
-        //creating bottom section
-        JPanel panel = new JPanel();
-        JLabel label = new JLabel("enter text");
-        JTextField tf  = new JTextField(10);
-        
+        //components to mainFrame
+        mainFrame.getContentPane().add(menuBar);
+    }
+    
+    public void run() {
+        mainFrame.setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        LocatorWindow_new lw = new LocatorWindow_new();
+        lw.run();
     }
 }
