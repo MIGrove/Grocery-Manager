@@ -23,27 +23,8 @@ public class DatabaseManager {
         this.msAccDB = msAccDB;
     }
     
-    public String getString(String query, int column, int row) {
-        String resultString = "errorString";
-        this.connect();
-        
-        try {
-            ResultSet resultSet = statement.executeQuery(query);
-            
-            if (resultSet.next()) {
-                for(int i = 1; i <= row - 1; i++) {
-                    resultSet.next();
-                }
-                resultString = resultSet.getString(column);
-            }
-            
-            this.close(resultSet, statement, connection);
-        }
-        catch (SQLException sqlex) {
-            sqlex.printStackTrace();
-        }
-        
-        return resultString;
+    public String getString(String query, int row, int column) {
+        return getRow(query, row).get(column - 1);
     }
     
     public ArrayList<String> getRow(String query, int row) {
@@ -65,9 +46,27 @@ public class DatabaseManager {
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
+            
+            for (int i=0; i < 3; i++) {
+                resultArray.add("errorString");
+            }
         }
         
         return resultArray;
+    }
+    
+    public void executeUpdate(String query) {
+        this.connect();
+        
+        try {
+            statement.executeUpdate(query);
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        close(statement);
+        close(connection);
     }
     
     public int getNumColumns(ResultSet resultSet) {
@@ -90,14 +89,57 @@ public class DatabaseManager {
         
         try {
             ResultSet resultSet = statement.executeQuery(query);
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            resultInt = rsmd.getColumnCount();
+            return getNumColumns(resultSet);
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
         
         return resultInt;
+    }
+    
+    public ArrayList<String> getColumnNames(ResultSet resultSet) {
+        ArrayList<String> columnNames = new ArrayList<>();
+        
+        try {
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            
+            for (int i=1; i <= columnCount; i++) {
+                columnNames.add(rsmd.getColumnName(i));
+            }
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        return columnNames;
+    }
+    
+    public static ArrayList<String> getColumnNames(String query) {
+        /*
+            without this line, the method will fail (this is because
+            static methods here need to run the connect() method in a
+            new instance of DatabaseManager
+        */
+        new DatabaseManager().connect();
+        
+        ArrayList<String> columnNames = new ArrayList<>();
+        
+        try {
+            ResultSet resultSet = statement.executeQuery(query);
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            
+            for (int i=1; i <= columnCount; i++) {
+                columnNames.add(rsmd.getColumnName(i));
+            }
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();
+        }
+        
+        return columnNames;
     }
     
     public int getNumRows(ResultSet resultSet) {
@@ -112,10 +154,6 @@ public class DatabaseManager {
             sqlex.printStackTrace();
         }
         
-        if (resultInt == 0) {
-            System.out.println("No rows found!");
-        }
-        
         return resultInt;
     }
     
@@ -124,23 +162,24 @@ public class DatabaseManager {
         
         try {
             ResultSet resultSet = statement.executeQuery(query);
-            
-            while (resultSet.next()) {
-                resultInt++;
-            }
+            return getNumRows(resultSet);
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
         
-        if (resultInt == 0) {
-            System.out.println("No rows found!");
-        }
-        
         return resultInt;
     }
     
-    public void register() {
+    public static boolean hasRows(ResultSet resultSet) {
+        return new DatabaseManager().getNumRows(resultSet) != 0;
+    }
+    
+    public static boolean hasRows(String query) {
+        return new DatabaseManager().getNumRows(query) != 0;
+    }
+    
+    private void register() {
         try {
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
         }

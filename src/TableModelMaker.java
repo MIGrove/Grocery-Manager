@@ -1,38 +1,54 @@
 
+import java.util.Arrays;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class TableModelMaker {
     private DefaultTableModel model;
+    private final JTable leaderboard;
+    static DatabaseManager dbMan;
     
-    public TableModelMaker(JTable leaderboard, String query, String database) {
+    public TableModelMaker(JTable leaderboard) {
+        this.leaderboard = leaderboard;
+        dbMan = new DatabaseManager("GroceryManager.accdb");
+    }
+    
+    public void updateTable(String query) {
         model = (DefaultTableModel) leaderboard.getModel();
+        //gets the "height" of the access table, and makes the new table match it
         model.setRowCount(0);
+        //gets the "width" of the access table, and makes the new table match it
+        model.setColumnCount(0);
         
-        for (int i=0; i<convertTableTo2DArray(query, database).length; i++) {
-            model.addRow((convertTableTo2DArray(query, database))[i]);
+        for (String columnName : new DatabaseManager().getColumnNames(query)) {
+            model.addColumn(columnName);
+        }
+        
+        //adds rows to new table
+        for (int i=0; i<convertTableTo2DArray(query).length; i++) {
+            model.addRow((convertTableTo2DArray(query))[i]);
         }
         
         model.fireTableDataChanged();
     }
     
-    private static String[][] convertTableTo2DArray(String query, String database) {
-        DatabaseManager dbMan = new DatabaseManager(database);
+    public static String[][] convertTableTo2DArray(String query) {
+        
         int numColumns = dbMan.getNumColumns(query);
         int numRows = dbMan.getNumRows(query);
+        //number of rows and columns found is correct. no problem here.
         
         String[][] data = new String[numRows][numColumns];
         
-        for (int i = 1; i < numRows; i++) {
-            for (int j = 1; j < numColumns; j++) {
-                data[i][j] = dbMan.getString(query, j, i);
+        for (int i=0; i < numRows; i++) {
+            for (int j=0; j < numColumns; j++) {
+                data[i][j] = dbMan.getString(query, i+1, j+1);
             }
         }
-        
         return data;
     }
     
-    public DefaultTableModel getDefaultModel() {
+    public DefaultTableModel getModel() {
         return model;
     }
 }
