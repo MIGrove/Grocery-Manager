@@ -287,10 +287,20 @@ public class LoginWindow extends javax.swing.JFrame {
         String username = textUsername.getText();
         String pass = textPassword.getText();
         
+        //checks for invalid data
         if (username.equalsIgnoreCase("username") || username.equalsIgnoreCase("") || pass.equalsIgnoreCase("password") || pass.equalsIgnoreCase("")) {
             frameInvalidCreds.pack();
             frameInvalidCreds.setLocationRelativeTo(this);
             frameInvalidCreds.setVisible(true);
+        }
+        
+        //verifies data against tblUsers
+        String[][] convertedTable = TableModelMaker.convertTableTo2DArray("SELECT * FROM tblUsers WHERE Username = \"" + username + "\";");
+                
+        if (convertedTable[0][2].equalsIgnoreCase(pass)) {
+            //verified to be correct
+            LocatorWindow.main(new String[0]);
+            this.dispose();
         }
     }//GEN-LAST:event_buttonLoginActionPerformed
 
