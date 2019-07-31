@@ -332,7 +332,7 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonInvalidCredsActionPerformed
 
     private void generateTable() {
-        new TableModelMaker(tableUsernames).updateTable("SELECT Username FROM tblUsers");
+        new TableModelMaker(tableUsernames).updateTable("SELECT Username FROM tblUsers", false);
     }
     
     /**

@@ -1,11 +1,8 @@
 
 import java.awt.Component;
-import java.util.Arrays;
-import javafx.scene.control.SelectionMode;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -29,11 +26,13 @@ public class LocatorWindow extends javax.swing.JFrame {
      */
     public LocatorWindow() {
         initComponents();
+        System.out.println("LocatorWindow initialised...");
         generateTable();
+        System.out.println("LocatorWindow tables generated...");
         
         tableStock.getRowSorter().toggleSortOrder(0);
-        
         setColumnWidths();
+        System.out.println("LocatorWindow tables adjusted...");
     }
 
     /**
@@ -457,7 +456,7 @@ public class LocatorWindow extends javax.swing.JFrame {
             default: sortType = "SORTAllItems"; break;
         }
         
-        tModelMaker.updateTable("SELECT * FROM " + sortType);
+        tModelMaker.updateTable("SELECT * FROM " + sortType, true);
     }
     
     private void updateGrandTotal() {

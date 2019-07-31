@@ -1,5 +1,3 @@
-
-import java.util.Arrays;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -13,21 +11,28 @@ public class TableModelMaker {
         dbMan = new DatabaseManager("GroceryManager.accdb");
     }
     
-    public void updateTable(String query) {
+    public void updateTable(String query, boolean verbose) {
         model = (DefaultTableModel) leaderboard.getModel();
         //gets the "height" of the access table, and makes the new table match it
         model.setRowCount(0);
         //gets the "width" of the access table, and makes the new table match it
         model.setColumnCount(0);
         
+        if (verbose) System.out.print("Columns generated [");
+        
         for (String columnName : new DatabaseManager().getColumnNames(query)) {
             model.addColumn(columnName);
+            if (verbose) System.out.print("|");
         }
+        
+        if (verbose) System.out.print("]\nRows generated: [");
         
         //adds rows to new table
         for (int i=0; i<convertTableTo2DArray(query).length; i++) {
             model.addRow((convertTableTo2DArray(query))[i]);
+            if (verbose) System.out.print("|");
         }
+        if (verbose ) System.out.println("]");
         
         model.fireTableDataChanged();
     }
