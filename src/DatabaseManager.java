@@ -10,8 +10,8 @@ public class DatabaseManager {
     
     private static String msAccDB = "";
     
-    static Connection connection = null;
-    static Statement statement = null;
+    Connection connection = null;
+    Statement statement = null;
     
     public DatabaseManager() {
         this.register();
@@ -23,73 +23,76 @@ public class DatabaseManager {
         this.msAccDB = msAccDB;
     }
     
-    public String getString(String query, int column, int row) {
-        String resultString = "errorString";
+    private ResultSet getResultSet(String query) {
         this.connect();
         
         try {
             ResultSet resultSet = statement.executeQuery(query);
+            close(statement);
+            close(connection);
             
-            if (resultSet.next()) {
-                for(int i = 1; i <= row - 1; i++) {
-                    resultSet.next();
-                }
-                resultString = resultSet.getString(column);
-            }
-            
-            this.close(resultSet, statement, connection);
+            return resultSet;
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
+            close(statement);
+            close(connection);
+            
+            return null;
         }
-        
-        return resultString;
+    }
+    
+    public String getString(String query, int row, int column) {
+        return getRow(query, row).get(column - 1);
     }
     
     public ArrayList<String> getRow(String query, int row) {
         ArrayList<String> resultArray = new ArrayList<>();
-        this.connect();
+        ResultSet resultSet = getResultSet(query);
         
-        try {
-            ResultSet resultSet = statement.executeQuery(query);
-            
+        try {            
             if (resultSet.next()) {
                 for(int i = 1; i <= row - 1; i++) {
                     resultSet.next();
                 }
                 
-                for (int i = 1; i <= getNumColumns(resultSet); i++) {
+                for (int i = 1; i <= getNumColumns(query); i++) {
                     resultArray.add(resultSet.getString(i));
                 }
             }
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
+            
+            for (int i=0; i < 3; i++) {
+                resultArray.add("errorString");
+            }
         }
+        
+        close(resultSet);
         
         return resultArray;
     }
     
-    public int getNumColumns(ResultSet resultSet) {
-        int resultInt = -1;
+    public void executeUpdate(String query) {
+        this.connect();
         
         try {
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            resultInt = rsmd.getColumnCount();
+            statement.executeUpdate(query);
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
         
-        return resultInt;
+        close(statement);
+        close(connection);
     }
     
     public int getNumColumns(String query) {
         int resultInt = -1;
-        this.connect();
+        ResultSet resultSet = getResultSet(query);
         
         try {
-            ResultSet resultSet = statement.executeQuery(query);
             ResultSetMetaData rsmd = resultSet.getMetaData();
             resultInt = rsmd.getColumnCount();
         }
@@ -97,34 +100,37 @@ public class DatabaseManager {
             sqlex.printStackTrace();
         }
         
+        close(resultSet);
+        
         return resultInt;
     }
     
-    public int getNumRows(ResultSet resultSet) {
-        int resultInt = 0;
+    public ArrayList<String> getColumnNames(String query) {
+        ArrayList<String> columnNames = new ArrayList<>();
+        ResultSet resultSet = getResultSet(query);
         
         try {
-            while (resultSet.next()) {
-                resultInt++;
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnCount = rsmd.getColumnCount();
+            
+            for (int i=1; i <= columnCount; i++) {
+                columnNames.add(rsmd.getColumnName(i));
             }
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
         
-        if (resultInt == 0) {
-            System.out.println("No rows found!");
-        }
+        close(resultSet);
         
-        return resultInt;
+        return columnNames;
     }
     
     public int getNumRows(String query) {
         int resultInt = 0;
+        ResultSet resultSet = getResultSet(query);
         
         try {
-            ResultSet resultSet = statement.executeQuery(query);
-            
             while (resultSet.next()) {
                 resultInt++;
             }
@@ -133,14 +139,16 @@ public class DatabaseManager {
             sqlex.printStackTrace();
         }
         
-        if (resultInt == 0) {
-            System.out.println("No rows found!");
-        }
+        close(resultSet);
         
         return resultInt;
     }
     
-    public void register() {
+    public static boolean hasRows(String query) {
+        return new DatabaseManager().getNumRows(query) != 0;
+    }
+    
+    private void register() {
         try {
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
         }

@@ -295,13 +295,8 @@ public class LoginWindow extends javax.swing.JFrame {
         }
         
         //verifies data against tblUsers
-        String[][] convertedTable = TableModelMaker.convertTableTo2DArray("SELECT * FROM tblUsers WHERE Username = \"" + username + "\";");
-                
-        if (convertedTable[0][2].equalsIgnoreCase(pass)) {
-            //verified to be correct
-            LocatorWindow.main(new String[0]);
-            this.dispose();
-        }
+        boolean verified = false;
+        
     }//GEN-LAST:event_buttonLoginActionPerformed
 
     private void buttonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRegisterActionPerformed
@@ -332,7 +327,7 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonInvalidCredsActionPerformed
 
     private void generateTable() {
-        new TableModelMaker(tableUsernames).updateTable("SELECT Username FROM tblUsers", false);
+        new TableModelMaker(tableUsernames).updateTable("SELECT Username FROM tblUsers");
     }
     
     /**

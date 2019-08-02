@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 public class testClass {
     public static void main(String args[]) {
         
@@ -14,7 +16,8 @@ public class testClass {
         System.out.println(dbMan.getRow("SELECT * FROM tblStores WHERE StoreName = 'Woolworths';", 1));
         
         //testing TableModelMaker class
-        TableModelMaker tableModelMaker = new TableModelMaker();
-        System.out.println(tableModelMaker.convertTableTo2DArray("SELECT * FROM tblItems", "GroceryManager.accdb"));
+
+        //TableModelMaker tableModelMaker = new TableModelMaker(table, "SELECT * FROM tblItems");
+        
     }
 }
