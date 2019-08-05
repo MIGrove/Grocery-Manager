@@ -134,7 +134,7 @@ public class testFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonPopulateTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPopulateTableActionPerformed
-        new TableModelMaker(jTable1).updateTable(query);
+        new TableModelMaker(jTable1).updateTable(query, true);
         updateInfoText();
     }//GEN-LAST:event_buttonPopulateTableActionPerformed
 
