@@ -160,7 +160,7 @@ public class testFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonBackActionPerformed
 
     private void updateInfoText() {
-        String text = (DatabaseManager.hasRows(query)) ? "" : "NO ROWS FOUND!";
+        String text = (new DatabaseManager().hasRows(query)) ? "" : "NO ROWS FOUND!";
         textExtraInfo.setText(text);
     }
     

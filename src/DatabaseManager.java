@@ -165,7 +165,7 @@ public class DatabaseManager {
     
     //default connect method uses GroceryManager database
     private void connect() {
-        String dbURL = "jdbc:ucanaccess://" + msAccDB + ";keepMirror=/dbMirror/";
+        String dbURL = "jdbc:ucanaccess://" + msAccDB + ";keepMirror=dbMirror/";
         
         try {
             connection = DriverManager.getConnection(dbURL);
