@@ -1,23 +1,29 @@
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class testClass {
-    public static void main(String args[]) {
+    static String result = "";
+    
+    public static void main(String args[]) throws InterruptedException, ExecutionException {
         
-        DatabaseManager dbMan = new DatabaseManager();
+        TableGenWorker worker = new TableGenWorker("SELECT * FROM tblUsers");
+        worker.execute();
         
-        //testing single string output
-        System.out.println(dbMan.getString("SELECT * FROM tblItems", 3, 1));
-        System.out.println(dbMan.getString("SELECT * FROM tblItems", 3, 2));
-        System.out.println(dbMan.getString("SELECT * FROM tblStores", 2, 1));
+        while (true) {
+            
+            if (worker.isDone()) {
+                System.out.println(result);
+            }
+            else {
+                System.out.println("worker not done yet");
+            }
+        }
+    }
         
-        //testing multiple string output
-        System.out.println(dbMan.getRow("SELECT * FROM tblItems", 1));
-        System.out.println(dbMan.getRow("SELECT * FROM tblItems", 2));
-        System.out.println(dbMan.getRow("SELECT * FROM tblStores WHERE StoreName = 'Woolworths';", 1));
-        
-        //testing TableModelMaker class
-
-        //TableModelMaker tableModelMaker = new TableModelMaker(table, "SELECT * FROM tblItems");
-        
+    
+    public void setResult(String result) {
+        this.result = result;
     }
 }
