@@ -7,39 +7,55 @@ import java.sql.Statement;
 import java.util.ArrayList;
  
 public class DatabaseManager {
+    /*
+    the class will connect to the database when instantiated.
+    the endConnection() method must be called after using the class, or
+    else the app will begin to run very slowly.
+    */
     
-    private static String msAccDB = "";
+    private String msAccDB = "";
     
     Connection connection = null;
     Statement statement = null;
     
     public DatabaseManager() {
-        this.register();
-        this.msAccDB = "GroceryManager.accdb";
+        register();
+        msAccDB = "GroceryManager.accdb";
+        
+        connect();
     }
     
     public DatabaseManager(String msAccDB) {
-        this.register();
+        register();
         this.msAccDB = msAccDB;
+        
+        connect();
     }
     
-    private ResultSet getResultSet(String query) {
-        this.connect();
-        
+    private ResultSet getResultSet(String query) {        
         try {
-            ResultSet resultSet = statement.executeQuery(query);
-            close(statement);
-            close(connection);
+            return statement.executeQuery(query);
+        }
+        catch (SQLException sqlex) {
+            sqlex.printStackTrace();            
+            return null;
+        }
+    }
+    
+    private ResultSetMetaData getMetaData(String query) {
+        ResultSet resultSet = getResultSet(query);
+        try {
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            close(resultSet);
             
-            return resultSet;
+            return rsmd;
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
-            close(statement);
-            close(connection);
+            close(resultSet);
             
             return null;
-        }
+        }        
     }
     
     public String getString(String query, int row, int column) {
@@ -68,62 +84,51 @@ public class DatabaseManager {
                 resultArray.add("errorString");
             }
         }
-        
         close(resultSet);
         
         return resultArray;
     }
     
-    public void executeUpdate(String query) {
-        this.connect();
-        
+    public void executeUpdate(String query) {        
         try {
             statement.executeUpdate(query);
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
-        
-        close(statement);
-        close(connection);
     }
     
     public int getNumColumns(String query) {
         int resultInt = -1;
-        ResultSet resultSet = getResultSet(query);
         
         try {
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            resultInt = rsmd.getColumnCount();
+            resultInt = getMetaData(query).getColumnCount();
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
-        
-        close(resultSet);
-        
+                
         return resultInt;
     }
     
     public ArrayList<String> getColumnNames(String query) {
         ArrayList<String> columnNames = new ArrayList<>();
-        ResultSet resultSet = getResultSet(query);
         
         try {
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            int columnCount = rsmd.getColumnCount();
+            ResultSetMetaData rsmd = getMetaData(query);
+            
+            int columnCount = rsmd.getColumnCount(); //faster than calling getNumColumns() if there is already meta data.
             
             for (int i=1; i <= columnCount; i++) {
                 columnNames.add(rsmd.getColumnName(i));
             }
+            
+            return columnNames;
         }
         catch (SQLException sqlex) {
             sqlex.printStackTrace();
-        }
-        
-        close(resultSet);
-        
-        return columnNames;
+            return null;
+        }                
     }
     
     public int getNumRows(String query) {
@@ -131,8 +136,8 @@ public class DatabaseManager {
         ResultSet resultSet = getResultSet(query);
         
         try {
-            while (resultSet.next()) {
-                resultInt++;
+            while (resultSet.next()) {  // must double check if this actually gets the correct number of rows
+                resultInt++;            // because next() is not called inside of the loop
             }
         }
         catch (SQLException sqlex) {
@@ -144,8 +149,8 @@ public class DatabaseManager {
         return resultInt;
     }
     
-    public static boolean hasRows(String query) {
-        return new DatabaseManager().getNumRows(query) != 0;
+    public boolean hasRows(String query) {
+        return getNumRows(query) != 0;
     }
     
     private void register() {
@@ -159,8 +164,8 @@ public class DatabaseManager {
     }
     
     //default connect method uses GroceryManager database
-    public void connect() {
-        String dbURL = "jdbc:ucanaccess://" + msAccDB;
+    private void connect() {
+        String dbURL = "jdbc:ucanaccess://" + msAccDB + ";keepMirror=dbMirror/";
         
         try {
             connection = DriverManager.getConnection(dbURL);

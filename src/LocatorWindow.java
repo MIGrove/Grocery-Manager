@@ -25,14 +25,10 @@ public class LocatorWindow extends javax.swing.JFrame {
      * Creates new form LocatorWindow
      */
     public LocatorWindow() {
+        
         initComponents();
         System.out.println("LocatorWindow initialised...");
         generateTable();
-        System.out.println("LocatorWindow tables generated...");
-        
-        tableStock.getRowSorter().toggleSortOrder(0);
-        setColumnWidths();
-        System.out.println("LocatorWindow tables adjusted...");
     }
 
     /**
@@ -445,8 +441,7 @@ public class LocatorWindow extends javax.swing.JFrame {
         System.out.println("Loading testFrame...");
     }//GEN-LAST:event_menuItemDebugMenuActionPerformed
 
-    private void generateTable() {
-        TableModelMaker tModelMaker = new TableModelMaker(tableStock);
+    private void generateTable() {        
         String sortType;
         
         switch (comboSortType.getSelectedIndex()) {
@@ -456,7 +451,17 @@ public class LocatorWindow extends javax.swing.JFrame {
             default: sortType = "SORTAllItems"; break;
         }
         
-        tModelMaker.updateTable("SELECT * FROM " + sortType, true);
+        //use the SwingWorker here, and disable the sort combo box until it is done processing
+        
+        TableModelMaker.updateTable("SELECT * FROM " + sortType, true, tableStock);
+        //new TableGenWorker(sortType, true, tableStock).execute();
+        
+        System.out.println("LocatorWindow tables generated...");
+        
+        tableStock.getRowSorter().toggleSortOrder(0);
+        setColumnWidths();
+        
+        System.out.println("LocatorWindow tables adjusted...");
     }
     
     private void updateGrandTotal() {

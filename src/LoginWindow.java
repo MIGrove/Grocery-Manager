@@ -298,7 +298,7 @@ public class LoginWindow extends javax.swing.JFrame {
         String[][] convertedTable = TableModelMaker.convertTableTo2DArray("SELECT * FROM tblUsers WHERE Username = \"" + username + "\";");
                 
         if (convertedTable[0][2].equalsIgnoreCase(pass)) {
-            //verified to be correct
+            //verified to be correct            
             LocatorWindow.main(new String[0]);
             this.dispose();
         }
@@ -332,7 +332,7 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonInvalidCredsActionPerformed
 
     private void generateTable() {
-        new TableModelMaker(tableUsernames).updateTable("SELECT Username FROM tblUsers", false);
+        TableModelMaker.updateTable("SELECT Username FROM tblUsers", false, tableUsernames);
     }
     
     /**
