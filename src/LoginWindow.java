@@ -1,6 +1,7 @@
 
 import java.awt.Toolkit;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -99,6 +100,11 @@ public class LoginWindow extends javax.swing.JFrame {
                 textUsernameFocusLost(evt);
             }
         });
+        textUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textUsernameActionPerformed(evt);
+            }
+        });
 
         textPassword.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         textPassword.setText("Password");
@@ -108,6 +114,11 @@ public class LoginWindow extends javax.swing.JFrame {
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
                 textPasswordFocusLost(evt);
+            }
+        });
+        textPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textPasswordActionPerformed(evt);
             }
         });
 
@@ -284,24 +295,7 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_textPasswordFocusLost
 
     private void buttonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoginActionPerformed
-        String username = textUsername.getText();
-        String pass = textPassword.getText();
-        
-        //checks for invalid data
-        if (username.equalsIgnoreCase("username") || username.equalsIgnoreCase("") || pass.equalsIgnoreCase("password") || pass.equalsIgnoreCase("")) {
-            frameInvalidCreds.pack();
-            frameInvalidCreds.setLocationRelativeTo(this);
-            frameInvalidCreds.setVisible(true);
-        }
-        
-        //verifies data against tblUsers
-        String[][] convertedTable = TableModelMaker.convertTableTo2DArray("SELECT * FROM tblUsers WHERE Username = \"" + username + "\";");
-                
-        if (convertedTable[0][2].equalsIgnoreCase(pass)) {
-            //verified to be correct            
-            LocatorWindow.main(new String[0]);
-            this.dispose();
-        }
+        verify();
     }//GEN-LAST:event_buttonLoginActionPerformed
 
     private void buttonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRegisterActionPerformed
@@ -322,8 +316,8 @@ public class LoginWindow extends javax.swing.JFrame {
 
     private void buttonGuestLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonGuestLoginActionPerformed
         //navigate to locator window
-        LocatorWindow.main(new String[0]);
-        this.dispose();
+        UserLocationWindow.main(new String[0], this);
+        //this.dispose();
         System.out.println("Loading LocatorWindow...");
     }//GEN-LAST:event_buttonGuestLoginActionPerformed
 
@@ -331,6 +325,35 @@ public class LoginWindow extends javax.swing.JFrame {
         frameInvalidCreds.setVisible(false);
     }//GEN-LAST:event_buttonInvalidCredsActionPerformed
 
+    private void textUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textUsernameActionPerformed
+        verify();
+    }//GEN-LAST:event_textUsernameActionPerformed
+
+    private void textPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textPasswordActionPerformed
+        verify();
+    }//GEN-LAST:event_textPasswordActionPerformed
+
+    private void verify() {
+        String username = textUsername.getText();
+        String pass = textPassword.getText();
+        
+        //checks for invalid data
+        if (username.equalsIgnoreCase("username") || username.equalsIgnoreCase("") || pass.equalsIgnoreCase("password") || pass.equalsIgnoreCase("")) {
+            frameInvalidCreds.pack();
+            frameInvalidCreds.setLocationRelativeTo(this);
+            frameInvalidCreds.setVisible(true);
+        }
+        
+        //verifies data against tblUsers
+        ArrayList<String> tableFirstRow = new DatabaseManager().getRow("SELECT * FROM tblUsers WHERE Username = \"" + username + "\";", 1);
+                
+        if (tableFirstRow.get(2).equalsIgnoreCase(pass)) {
+            //verified to be correct            
+            LocatorWindow.main(new String[0]);
+            this.dispose();
+        }
+    }
+    
     private void generateTable() {
         TableModelMaker.updateTable("SELECT Username FROM tblUsers", false, tableUsernames);
     }

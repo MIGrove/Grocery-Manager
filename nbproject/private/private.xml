@@ -5,9 +5,15 @@
         <group>
             <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/DatabaseManager.java</file>
             <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/TableModelMaker.java</file>
-            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/testFrame.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/Store.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/MapWindow.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/testClass.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/Map.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/GridPane.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/UserLocationWindow.java</file>
             <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/LoginWindow.java</file>
             <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/LocatorWindow.java</file>
+            <file>file:/C:/Users/Matthew/Documents/GitHub/Grocery-Manager/src/StoreType.java</file>
         </group>
     </open-files>
 </project-private>

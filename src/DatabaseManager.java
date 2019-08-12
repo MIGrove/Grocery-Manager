@@ -58,7 +58,7 @@ public class DatabaseManager {
         }        
     }
     
-    public String getString(String query, int row, int column) {
+    public String getString(String query, int row, int column) { //first cell is 1,1 (not 0,0)
         return getRow(query, row).get(column - 1);
     }
     
@@ -131,13 +131,13 @@ public class DatabaseManager {
         }                
     }
     
-    public int getNumRows(String query) {
+    public int getNumRows(String query) { //if there are three rows, return 3
         int resultInt = 0;
         ResultSet resultSet = getResultSet(query);
         
         try {
-            while (resultSet.next()) {  // must double check if this actually gets the correct number of rows
-                resultInt++;            // because next() is not called inside of the loop
+            while (resultSet.next()) {
+                resultInt++;
             }
         }
         catch (SQLException sqlex) {
@@ -151,6 +151,23 @@ public class DatabaseManager {
     
     public boolean hasRows(String query) {
         return getNumRows(query) != 0;
+    }
+    
+    public String[][] convertTableTo2DArray(String query) {
+        
+        int numColumns = getNumColumns(query);
+        int numRows = getNumRows(query);
+        //number of rows and columns found is correct. no problem here.
+
+        String[][] data = new String[numRows][numColumns];
+
+        for (int i=0; i < numRows; i++) {
+            for (int j=0; j < numColumns; j++) {
+                data[i][j] = getString(query, i+1, j+1);
+            }
+        }
+        
+        return data;  
     }
     
     private void register() {

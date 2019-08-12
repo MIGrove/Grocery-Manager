@@ -25,7 +25,7 @@ public class TableGenWorker extends SwingWorker<String, Void> {
     protected void done() {
         try {
             outputString = get();
-            new testClass().setResult(outputString);
+            //new testClass().setResult(outputString);
         }
         catch (InterruptedException | ExecutionException ex) {
             ex.printStackTrace();

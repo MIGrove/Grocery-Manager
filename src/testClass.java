@@ -1,29 +1,13 @@
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
 
 public class testClass {
-    static String result = "";
-    
-    public static void main(String args[]) throws InterruptedException, ExecutionException {
+    public static void main(String args[]) {
         
-        TableGenWorker worker = new TableGenWorker("SELECT * FROM tblUsers");
-        worker.execute();
+        //System.out.println(new DatabaseManager().getString("SELECT * FROM StoreFullDetails", 1, 1));
         
-        while (true) {
-            
-            if (worker.isDone()) {
-                System.out.println(result);
-            }
-            else {
-                System.out.println("worker not done yet");
-            }
+        Map map = new Map(0, 0);
+        
+        for (Store s : map.getClosenessSortedStores()) {
+            System.out.println(s.toString() + "\tdistance from origin: " + Math.round(map.distanceToStore(s)));
         }
-    }
-        
-    
-    public void setResult(String result) {
-        this.result = result;
     }
 }

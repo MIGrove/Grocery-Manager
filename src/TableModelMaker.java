@@ -22,7 +22,7 @@ public final class TableModelMaker {  //this class contains only static methods
         
         if (verbose) System.out.print("]\nRows generated: [");
         
-        String[][] cellContent = convertTableTo2DArray(query);
+        String[][] cellContent = new DatabaseManager().convertTableTo2DArray(query);
         
         //adds rows to new table
         for (int i=0; i<cellContent.length; i++) {
@@ -33,23 +33,5 @@ public final class TableModelMaker {  //this class contains only static methods
         if (verbose ) System.out.println("]");
         
         model.fireTableDataChanged();
-    }
-    
-    public static String[][] convertTableTo2DArray(String query) {
-        DatabaseManager dbMan = new DatabaseManager("GroceryManager.accdb");
-
-        int numColumns = dbMan.getNumColumns(query);
-        int numRows = dbMan.getNumRows(query);
-        //number of rows and columns found is correct. no problem here.
-
-        String[][] data = new String[numRows][numColumns];
-
-        for (int i=0; i < numRows; i++) {
-            for (int j=0; j < numColumns; j++) {
-                data[i][j] = dbMan.getString(query, i+1, j+1);
-            }
-        }
-        
-        return data;  
     }
 }
