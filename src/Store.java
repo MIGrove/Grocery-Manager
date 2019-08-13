@@ -1,3 +1,5 @@
+import java.awt.Point;
+
 public class Store implements Comparable<Store> {
     //tblStoreLocations in GroceryManager.accdb
     
@@ -14,8 +16,8 @@ public class Store implements Comparable<Store> {
     
     @Override
     public int compareTo(Store comparedStore) {
-        int xOrigin = Map.getXOrigin();
-        int yOrigin = Map.getYOrigin();
+        int xOrigin = new Map().getXOrigin();
+        int yOrigin = new Map().getYOrigin();
         
         double distanceToStore = Map.calculateDistance(this.getX(), this.getY(), xOrigin, yOrigin);
         double distanceToComparedStore = Map.calculateDistance(comparedStore.getX(), comparedStore.getY(), xOrigin, yOrigin);
@@ -33,6 +35,8 @@ public class Store implements Comparable<Store> {
     public int getX() { return x; }
     
     public int getY() { return y; }
+    
+    public Point getPoint() { return new Point(x, y); }
     
     public String getStoreName() { return storeName; }
 }

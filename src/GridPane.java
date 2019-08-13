@@ -3,7 +3,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.scene.paint.Paint;
@@ -22,7 +24,13 @@ public class GridPane extends JPanel {
     private ArrayList<Integer> yPoints = new ArrayList<>();
     private ArrayList<Circle> circleArray = new ArrayList<>();
     
+    private boolean drawBackground = true;
+    
     public GridPane() {
+    }
+    
+    public GridPane(int columns) {
+        this.columns = columns;
     }
     
     @Override
@@ -30,15 +38,16 @@ public class GridPane extends JPanel {
         return new Dimension(400, 400); //the size of the grid -- 400 x 400 is a nice looking default
     }
     
+    @Override
     protected void paintComponent(Graphics gfx) {
         super.paintComponent(gfx);
         
+        Graphics2D gfx2d = (Graphics2D) gfx.create();
+                
         xPoints.clear();
         yPoints.clear();
         
         int lastXPoint = -1, lastYPoint = -1; //allows the last point (bottom right) to be recorded
-        
-        Graphics2D gfx2d = (Graphics2D) gfx.create();
         
         int size = Math.min(getWidth() - 4, getHeight() - 4) / columns;
         int width = getWidth() - (size * 2);
@@ -111,6 +120,19 @@ public class GridPane extends JPanel {
     public void setColumns(int columns) {
         this.columns = columns;
         repaint();
+    }
+    
+    public void drawBackground(boolean drawBackground) {
+        this.drawBackground = drawBackground;
+    }
+    
+    public void addRouteOnGrid(ArrayList<Point> routePoints) {
+        Point endPoint = routePoints.get(0);
+        
+        for (Point point : routePoints) {
+            addLineOnGrid(point, endPoint);
+            endPoint = point;
+        }
     }
     
     public void addLineOnGrid(int x1, int y1, int x2, int y2)  {

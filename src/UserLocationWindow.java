@@ -1,4 +1,4 @@
-
+import java.awt.Point;
 import javax.swing.JFrame;
 
 /*
@@ -13,6 +13,7 @@ import javax.swing.JFrame;
  */
 public class UserLocationWindow extends javax.swing.JFrame {
     JFrame originalFrame;
+    static Point originPoint;
     /**
      * Creates new form UserLocationWindow
      */
@@ -38,7 +39,7 @@ public class UserLocationWindow extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         sliderX = new javax.swing.JSlider();
         sliderY = new javax.swing.JSlider();
-        jButton1 = new javax.swing.JButton();
+        buttonSelectLocation = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Location selection");
@@ -69,10 +70,10 @@ public class UserLocationWindow extends javax.swing.JFrame {
         sliderY.setValue(2);
         sliderY.setInverted(true);
 
-        jButton1.setText("Click when location selected");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        buttonSelectLocation.setText("Click when location selected");
+        buttonSelectLocation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                buttonSelectLocationActionPerformed(evt);
             }
         });
 
@@ -88,10 +89,9 @@ public class UserLocationWindow extends javax.swing.JFrame {
                         .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(sliderX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(gridPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                            .addComponent(buttonSelectLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                            .addComponent(sliderX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(gridPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(27, 27, 27))
         );
         layout.setVerticalGroup(
@@ -103,10 +103,10 @@ public class UserLocationWindow extends javax.swing.JFrame {
                 .addComponent(sliderX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(sliderY, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sliderY, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
                     .addComponent(gridPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(buttonSelectLocation)
                 .addGap(10, 10, 10))
         );
 
@@ -114,11 +114,16 @@ public class UserLocationWindow extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    public static Point getOriginPoint() { return originPoint; }
+    
+    private void buttonSelectLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSelectLocationActionPerformed
+        originPoint = new Point(sliderX.getValue(), sliderY.getValue());
+        System.out.println("Origin point selected --->\t" + originPoint.toString());
+        
         originalFrame.dispose();
         LocatorWindow.main(new String[0]);
         this.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_buttonSelectLocationActionPerformed
 
     /**
      * @param args the command line arguments
@@ -150,6 +155,7 @@ public class UserLocationWindow extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new UserLocationWindow(originalFrame).setVisible(true);
             }
@@ -157,8 +163,8 @@ public class UserLocationWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonSelectLocation;
     private GridPane gridPane2;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSlider sliderX;
     private javax.swing.JSlider sliderY;

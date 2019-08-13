@@ -32,11 +32,9 @@
                       <Component id="sliderY" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jButton1" pref="400" max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="sliderX" max="32767" attributes="0"/>
-                              <Component id="gridPane2" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="buttonSelectLocation" pref="400" max="32767" attributes="0"/>
+                          <Component id="sliderX" max="32767" attributes="0"/>
+                          <Component id="gridPane2" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -53,11 +51,11 @@
               <Component id="sliderX" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="sliderY" max="32767" attributes="0"/>
+                  <Component id="sliderY" pref="400" max="32767" attributes="0"/>
                   <Component id="gridPane2" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <Component id="buttonSelectLocation" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -103,12 +101,12 @@
         <Property name="inverted" type="boolean" value="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="buttonSelectLocation">
       <Properties>
         <Property name="text" type="java.lang.String" value="Click when location selected"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonSelectLocationActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

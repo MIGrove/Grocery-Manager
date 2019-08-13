@@ -11,13 +11,13 @@ import java.util.Arrays;
  *
  * @author Matthew
  */
-public class testFrame extends javax.swing.JFrame {
+public class TableDebugFrame extends javax.swing.JFrame {
     private String tableAccessed;
     private String query;
     /**
      * Creates new form testFrame
      */
-    public testFrame() {
+    public TableDebugFrame() {
         initComponents();
         tableAccessed = comboTableAccessed.getSelectedItem().toString();
         query = "SELECT * FROM " + tableAccessed + ";";
@@ -41,7 +41,7 @@ public class testFrame extends javax.swing.JFrame {
         buttonBack = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Debug menu");
+        setTitle("Table debug menu");
         setResizable(false);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -139,7 +139,7 @@ public class testFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonPopulateTableActionPerformed
 
     private void buttonConsoleOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConsoleOutputActionPerformed
-        String[][] testArray = TableModelMaker.convertTableTo2DArray(query);
+        String[][] testArray = new DatabaseManager().convertTableTo2DArray(query);
         
         for (String[] stringArray : testArray) {
             System.out.println(Arrays.toString(stringArray));
@@ -181,20 +181,23 @@ public class testFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableDebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableDebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableDebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TableDebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new testFrame().setVisible(true);
+                new TableDebugFrame().setVisible(true);
             }
         });
     }

@@ -14,7 +14,8 @@ import javax.swing.SwingUtilities;
  * @author Matthew
  */
 public class MapWindow extends javax.swing.JFrame {
-    private int userXCoord = 0, userYCoord = 0;
+    Map map = new Map();
+    private Point originPoint = map.getOriginPoint();
     
     /**
      * Creates new form MapWindow
@@ -22,6 +23,7 @@ public class MapWindow extends javax.swing.JFrame {
     public MapWindow() {
         initComponents();
         addStores();
+        addRoutes();
     }
 
     /**
@@ -45,7 +47,7 @@ public class MapWindow extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         menuOptions = new javax.swing.JMenu();
         menuItemBack = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        menuItemDebugMenu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mapping");
@@ -88,13 +90,13 @@ public class MapWindow extends javax.swing.JFrame {
         });
         menuOptions.add(menuItemBack);
 
-        jMenuItem1.setText("[test] draw circle at (2;2)");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        menuItemDebugMenu.setText("Grid debug menu");
+        menuItemDebugMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                menuItemDebugMenuActionPerformed(evt);
             }
         });
-        menuOptions.add(jMenuItem1);
+        menuOptions.add(menuItemDebugMenu);
 
         jMenuBar1.add(menuOptions);
 
@@ -142,10 +144,26 @@ public class MapWindow extends javax.swing.JFrame {
     private void addStores() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                for (Store store : new Map(userXCoord, userYCoord).getStoreArray()) { //remember to change the x and y origins of the Map object to be those originally entered by the user
-                    Point originPoint = new Point(store.getX(), store.getY());
+                for (Store store : map.getStoreArray()) {
                     System.out.println("store x: " + store.getX() + "\tstore y: " + store.getY());
                     gridPane1.addCircleOnGrid(store.getX(), store.getY());
+                }
+            }
+        });
+    }
+    
+    private void addRoutes() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {                
+                for (Store store : map.getStoreArray()) {
+                    
+                    Point storePoint = store.getPoint();
+                    System.out.println("\n\nSTORE POINT: " + storePoint + "\nORIGIN POINT: " + map.getOriginPoint() + "\n");
+                    
+                    ArrayList<Point> routePoints = map.getRouteToPoint(storePoint);
+                    System.out.println("\nROUTE POINTS: " + routePoints + "\n\n");
+                    
+                    gridPane1.addRouteOnGrid(routePoints);
                 }
             }
         });
@@ -160,11 +178,10 @@ public class MapWindow extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_menuItemBackActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        gridPane1.clearCircles();
-        gridPane1.addCircleOnGrid(2, 2);
-        addStores();
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    private void menuItemDebugMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDebugMenuActionPerformed
+        GridDebugFrame.main(new String[0]);
+        dispose();
+    }//GEN-LAST:event_menuItemDebugMenuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -204,7 +221,6 @@ public class MapWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private GridPane gridPane1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -214,6 +230,7 @@ public class MapWindow extends javax.swing.JFrame {
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JMenuItem menuItemBack;
+    private javax.swing.JMenuItem menuItemDebugMenu;
     private javax.swing.JMenu menuOptions;
     // End of variables declaration//GEN-END:variables
 }

@@ -441,13 +441,14 @@ public class LocatorWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemChangeUserActionPerformed
 
     private void menuItemDebugMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemDebugMenuActionPerformed
-        testFrame.main(new String[0]);
+        TableDebugFrame.main(new String[0]);
         this.dispose();
         System.out.println("Loading testFrame...");
     }//GEN-LAST:event_menuItemDebugMenuActionPerformed
 
     private void buttonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNextActionPerformed
-        // TODO add your handling code here:
+        MapWindow.main(new String[0]);
+        dispose();
     }//GEN-LAST:event_buttonNextActionPerformed
 
     private void generateTable() {        
