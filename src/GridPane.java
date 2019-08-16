@@ -5,24 +5,31 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 /*
 THIS CLASS IS SACRED -- IT TOOK CRAZY AMOUNTS OF TIME TO MAKE
 so please don't touch it :)
 */
 public class GridPane extends JPanel {
+    private final int DEFAULT_STROKE_SIZE = 6;
+    
     private int columns = 11;    //this is both the number of columns AND the number of rows -- 11 is a nice looking default
     
-    private ArrayList<Line> lineArray = new ArrayList<>();
     private ArrayList<Integer> xPoints = new ArrayList<>();
     private ArrayList<Integer> yPoints = new ArrayList<>();
-    private ArrayList<Circle> circleArray = new ArrayList<>();
+    
+    private ArrayList<ColorLine> lineArray = new ArrayList<>();
+    private ArrayList<ColorCircle> circleArray = new ArrayList<>();
     
     private boolean drawBackground = true;
     
@@ -48,7 +55,7 @@ public class GridPane extends JPanel {
         yPoints.clear();
         
         int lastXPoint = -1, lastYPoint = -1; //allows the last point (bottom right) to be recorded
-        
+                
         int size = Math.min(getWidth() - 4, getHeight() - 4) / columns;
         int width = getWidth() - (size * 2);
         int height = getHeight() - (size * 2);
@@ -93,19 +100,38 @@ public class GridPane extends JPanel {
             }
         xPoints.add(lastXPoint);
         
-        gfx2d.setStroke(new BasicStroke(6));
-        gfx2d.setColor(Color.RED);
+        gfx2d.setStroke(new BasicStroke(DEFAULT_STROKE_SIZE));
         
         //create lines if lines requested
         if (!lineArray.isEmpty()) {
-            for (Line line : lineArray) {
+            for (ColorLine line : lineArray) {
+                
+                //adds a border, or shadow, to the lines
+                gfx2d.setColor(Color.BLACK);
+                gfx2d.setStroke(new BasicStroke(2));
+                gfx2d.drawLine((int) (line.getStartX() + (DEFAULT_STROKE_SIZE * 0.5)), (int) line.getStartY(), (int) (line.getEndX() + (DEFAULT_STROKE_SIZE * 0.5)), (int) line.getEndY());
+                
+                gfx2d.setColor(line.getColor());
+                gfx2d.setStroke(new BasicStroke(DEFAULT_STROKE_SIZE));
+                
                 gfx2d.drawLine((int) line.getStartX(), (int) line.getStartY(), (int) line.getEndX(), (int) line.getEndY());
             }
         }
         
         //create circles if circles requested
         if (!circleArray.isEmpty()) {
-            for (Circle circle : circleArray) {
+            for (ColorCircle circle : circleArray) {
+                
+                //adds a border, or shadow, to the circles
+                gfx2d.setColor(Color.BLACK);
+                
+                gfx2d.drawOval((int) circle.getCenterX(), (int) circle.getCenterY(), (int) (circle.getRadius() + 2), (int) (circle.getRadius() + 2));
+                gfx2d.fillOval((int) circle.getCenterX(), (int) circle.getCenterY(), (int) (circle.getRadius() + 2), (int) (circle.getRadius() + 2));
+                
+                //need to figure out how to add diagonal line from left corner to right corner
+                
+                gfx2d.setColor(circle.getColor());
+                
                 gfx2d.drawOval((int) circle.getCenterX(), (int) circle.getCenterY(), (int) circle.getRadius(), (int) circle.getRadius());
                 gfx2d.fillOval((int) circle.getCenterX(), (int) circle.getCenterY(), (int) circle.getRadius(), (int) circle.getRadius());
             }
@@ -126,25 +152,26 @@ public class GridPane extends JPanel {
         this.drawBackground = drawBackground;
     }
     
-    public void addRouteOnGrid(ArrayList<Point> routePoints) {
+    public void addRouteOnGrid(ArrayList<Point> routePoints, Color color) {
         Point endPoint = routePoints.get(0);
         
         for (Point point : routePoints) {
-            addLineOnGrid(point, endPoint);
+            addLineOnGrid(point, endPoint, color);
             endPoint = point;
         }
     }
     
-    public void addLineOnGrid(int x1, int y1, int x2, int y2)  {
+    public void addLineOnGrid(int x1, int y1, int x2, int y2, Color color)  {
         try {
             Point startPoint = convertCoordToIndexPoint(x1, y1);
             Point endPoint = convertCoordToIndexPoint(x2, y2);
             
-            Line line = new Line(
+            ColorLine line = new ColorLine(
                     xPoints.get(startPoint.x - 1),
                     yPoints.get(startPoint.y - 1),
                     xPoints.get(endPoint.x - 1),
-                    yPoints.get(endPoint.y - 1)
+                    yPoints.get(endPoint.y - 1),
+                    color
             );
             
             lineArray.add(line);
@@ -159,16 +186,17 @@ public class GridPane extends JPanel {
         }
     }
     
-    public void addLineOnGrid(Point startPoint, Point endPoint)  {
+    public void addLineOnGrid(Point startPoint, Point endPoint, Color color)  {
         try {
             startPoint = convertCoordToIndexPoint(startPoint.x, startPoint.y);
             endPoint = convertCoordToIndexPoint(endPoint.x, endPoint.y);
             
-            Line line = new Line(
+            ColorLine line = new ColorLine(
                     xPoints.get(startPoint.x - 1),
                     yPoints.get(startPoint.y - 1),
                     xPoints.get(endPoint.x - 1),
-                    yPoints.get(endPoint.y - 1)
+                    yPoints.get(endPoint.y - 1),
+                    color
             );
             
             lineArray.add(line);
@@ -183,15 +211,17 @@ public class GridPane extends JPanel {
         }
     }
     
-    public void addCircleOnGrid(int x, int y) {
+    public void addCircleOnGrid(int x, int y, Color color, boolean isCrossed) {
         try {
             Point originPoint = convertCoordToIndexPoint(x, y);
             int size = Math.min(getWidth() - 4, getHeight() - 4) / columns;
             
-            Circle circle = new Circle(
+            ColorCircle circle = new ColorCircle(
                     xPoints.get(originPoint.x - 1) - (0.125 * size),
                     yPoints.get(originPoint.y - 1) - (0.125 * size),
-                    10
+                    10,
+                    color,
+                    isCrossed
             );
                         
             circleArray.add(circle);
@@ -206,15 +236,17 @@ public class GridPane extends JPanel {
         }
     }
     
-    public void addCircleOnGrid(Point originPoint) {
+    public void addCircleOnGrid(Point originPoint, Color color, boolean isCrossed) {
         try {
             originPoint = convertCoordToIndexPoint(originPoint.x, originPoint.y);
             int size = Math.min(getWidth() - 4, getHeight() - 4) / columns;
             
-            Circle circle = new Circle(
+            ColorCircle circle = new ColorCircle(
                     xPoints.get(originPoint.x - 1) - (0.125 * size),
                     yPoints.get(originPoint.y - 1) - (0.125 * size),
-                    10
+                    10,
+                    color,
+                    isCrossed
             );
                         
             circleArray.add(circle);

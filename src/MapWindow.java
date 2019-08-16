@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import javafx.scene.shape.Line;
@@ -15,7 +16,11 @@ import javax.swing.SwingUtilities;
  */
 public class MapWindow extends javax.swing.JFrame {
     Map map = new Map();
+    
     private Point originPoint = map.getOriginPoint();
+    
+    private ArrayList<Store> storeArray = map.getClosenessSortedStores();
+    private ArrayList<Point> storeCoords = new ArrayList<>();
     
     /**
      * Creates new form MapWindow
@@ -23,7 +28,8 @@ public class MapWindow extends javax.swing.JFrame {
     public MapWindow() {
         initComponents();
         addStores();
-        addRoutes();
+        addUser();
+        genText();
     }
 
     /**
@@ -41,9 +47,16 @@ public class MapWindow extends javax.swing.JFrame {
         jTextPane2 = new javax.swing.JTextPane();
         gridPane1 = new GridPane();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        textStores = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        textStoreCoords = new javax.swing.JTextArea();
+        comboRoute = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        textStoreDistance = new javax.swing.JTextArea();
+        jSeparator3 = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuOptions = new javax.swing.JMenu();
         menuItemBack = new javax.swing.JMenuItem();
@@ -73,12 +86,34 @@ public class MapWindow extends javax.swing.JFrame {
             .addGap(0, 400, Short.MAX_VALUE)
         );
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        textStores.setEditable(false);
+        textStores.setColumns(20);
+        textStores.setLineWrap(true);
+        textStores.setRows(5);
+        jScrollPane3.setViewportView(textStores);
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        textStoreCoords.setEditable(false);
+        textStoreCoords.setColumns(20);
+        textStoreCoords.setLineWrap(true);
+        textStoreCoords.setRows(5);
+        jScrollPane4.setViewportView(textStoreCoords);
+
+        comboRoute.setAutoscrolls(true);
+        comboRoute.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboRouteActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Show route to:");
+
+        textStoreDistance.setEditable(false);
+        textStoreDistance.setColumns(20);
+        textStoreDistance.setLineWrap(true);
+        textStoreDistance.setRows(5);
+        jScrollPane5.setViewportView(textStoreDistance);
 
         menuOptions.setText("Options");
 
@@ -108,12 +143,25 @@ public class MapWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addComponent(jSeparator1)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jSeparator3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(comboRoute, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(gridPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -123,17 +171,27 @@ public class MapWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(gridPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane3))
-                    .addComponent(jSeparator2))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(comboRoute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                            .addComponent(jScrollPane5)
+                            .addComponent(jScrollPane3)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(gridPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jSeparator2)))
                 .addGap(10, 10, 10))
         );
 
@@ -143,34 +201,48 @@ public class MapWindow extends javax.swing.JFrame {
 
     private void addStores() {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                for (Store store : map.getStoreArray()) {
-                    System.out.println("store x: " + store.getX() + "\tstore y: " + store.getY());
-                    gridPane1.addCircleOnGrid(store.getX(), store.getY());
-                }
-            }
-        });
-    }
-    
-    private void addRoutes() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {                
-                for (Store store : map.getStoreArray()) {
-                    
-                    Point storePoint = store.getPoint();
-                    System.out.println("\n\nSTORE POINT: " + storePoint + "\nORIGIN POINT: " + map.getOriginPoint() + "\n");
-                    
-                    ArrayList<Point> routePoints = map.getRouteToPoint(storePoint);
-                    System.out.println("\nROUTE POINTS: " + routePoints + "\n\n");
-                    
-                    gridPane1.addRouteOnGrid(routePoints);
+                for (Store store : storeArray) {
+                    gridPane1.addCircleOnGrid(store.getX(), store.getY(), Color.GRAY, false);
                 }
             }
         });
     }
     
     private void addUser() {
-        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                gridPane1.addCircleOnGrid(map.getOriginPoint(), Color.WHITE, false);
+            }
+        });
+    }
+    
+    private void genText() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                String allStoreNames = "", allStoreCoords = "", allStoreDistances = "";
+                int i = 0;
+                
+                for (Store store : storeArray) {
+                    allStoreNames += ("(" + i + ")   " + store.getStoreName() + "\n");
+                    allStoreCoords += (store.getPointString() + "\n");
+                    allStoreDistances += ((Math.round(map.distanceToStore(store) * 100.0) / 100.0) + "km\n");
+
+                    storeCoords.add(store.getPoint());
+
+                    comboRoute.addItem("(" + i + ")   " + store.getStoreName());
+                    
+                    i++;
+                }
+
+                textStores.setText(allStoreNames);
+                textStoreCoords.setText(allStoreCoords);
+                textStoreDistance.setText(allStoreDistances);
+            }
+        });
     }
     
     private void menuItemBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBackActionPerformed
@@ -182,6 +254,13 @@ public class MapWindow extends javax.swing.JFrame {
         GridDebugFrame.main(new String[0]);
         dispose();
     }//GEN-LAST:event_menuItemDebugMenuActionPerformed
+
+    private void comboRouteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboRouteActionPerformed
+        Store store = map.getStoreAt(storeCoords.get(comboRoute.getSelectedIndex()));
+        
+        gridPane1.clearLines();
+        gridPane1.addRouteOnGrid(map.getRouteToPoint(store.getPoint()), Color.RED);
+    }//GEN-LAST:event_comboRouteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -219,18 +298,25 @@ public class MapWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> comboRoute;
     private GridPane gridPane1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPane2;
     private javax.swing.JMenuItem menuItemBack;
     private javax.swing.JMenuItem menuItemDebugMenu;
     private javax.swing.JMenu menuOptions;
+    private javax.swing.JTextArea textStoreCoords;
+    private javax.swing.JTextArea textStoreDistance;
+    private javax.swing.JTextArea textStores;
     // End of variables declaration//GEN-END:variables
 }

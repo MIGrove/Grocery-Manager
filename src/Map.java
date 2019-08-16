@@ -122,6 +122,16 @@ public class Map {
         return storeArray;
     }
     
+    public Store getStoreAt(Point point) {
+        for (Store store : getStoreArray()) {
+            if (store.getPoint().equals(point)) {
+                return store;
+            }
+        }
+        
+        return null;
+    }
+    
     public int getXOrigin() { return xOrigin; }
     
     public int getYOrigin() { return yOrigin; }

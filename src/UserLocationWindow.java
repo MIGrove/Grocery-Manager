@@ -1,5 +1,9 @@
+import java.awt.Color;
 import java.awt.Point;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,11 +23,13 @@ public class UserLocationWindow extends javax.swing.JFrame {
      */
     public UserLocationWindow() {
         initComponents();
+        updateCirclePosition();
     }
     
     public UserLocationWindow(final JFrame originalFrame) {
         initComponents();
         this.originalFrame = originalFrame;
+        updateCirclePosition();
     }
 
     /**
@@ -62,6 +68,11 @@ public class UserLocationWindow extends javax.swing.JFrame {
         sliderX.setMinimum(1);
         sliderX.setSnapToTicks(true);
         sliderX.setValue(2);
+        sliderX.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sliderXMouseReleased(evt);
+            }
+        });
 
         sliderY.setMaximum(12);
         sliderY.setMinimum(1);
@@ -69,6 +80,11 @@ public class UserLocationWindow extends javax.swing.JFrame {
         sliderY.setSnapToTicks(true);
         sliderY.setValue(2);
         sliderY.setInverted(true);
+        sliderY.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sliderYMouseReleased(evt);
+            }
+        });
 
         buttonSelectLocation.setText("Click when location selected");
         buttonSelectLocation.addActionListener(new java.awt.event.ActionListener() {
@@ -84,15 +100,15 @@ public class UserLocationWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(sliderY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(buttonSelectLocation, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                            .addComponent(buttonSelectLocation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(sliderX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(gridPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(27, 27, 27))
+                .addGap(10, 10, 10))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -103,7 +119,7 @@ public class UserLocationWindow extends javax.swing.JFrame {
                 .addComponent(sliderX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(sliderY, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                    .addComponent(sliderY, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(gridPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonSelectLocation)
@@ -116,6 +132,8 @@ public class UserLocationWindow extends javax.swing.JFrame {
 
     public static Point getOriginPoint() { return originPoint; }
     
+    public void setOriginPoint(Point point) { originPoint = point; }
+    
     private void buttonSelectLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSelectLocationActionPerformed
         originPoint = new Point(sliderX.getValue(), sliderY.getValue());
         System.out.println("Origin point selected --->\t" + originPoint.toString());
@@ -125,6 +143,26 @@ public class UserLocationWindow extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_buttonSelectLocationActionPerformed
 
+    private void sliderXMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sliderXMouseReleased
+        updateCirclePosition();
+    }//GEN-LAST:event_sliderXMouseReleased
+
+    private void sliderYMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sliderYMouseReleased
+        updateCirclePosition();
+    }//GEN-LAST:event_sliderYMouseReleased
+
+    private void updateCirclePosition() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Point newPos = new Point(sliderX.getValue(), sliderY.getValue());
+
+                gridPane2.clearCircles();
+                gridPane2.addCircleOnGrid(newPos, Color.RED, false);
+            }
+        });
+    }
+    
     /**
      * @param args the command line arguments
      * @param originalFrame

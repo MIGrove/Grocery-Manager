@@ -1,4 +1,4 @@
-
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -203,7 +203,7 @@ public class GridDebugFrame extends javax.swing.JFrame {
         
         System.out.println(routePoints);
         
-        gridPane1.addRouteOnGrid(routePoints);
+        gridPane1.addRouteOnGrid(routePoints, Color.RED);
     }//GEN-LAST:event_buttonRightUpActionPerformed
 
     private void buttonLeftUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLeftUpActionPerformed
@@ -212,7 +212,7 @@ public class GridDebugFrame extends javax.swing.JFrame {
         
         System.out.println(routePoints);
         
-        gridPane1.addRouteOnGrid(routePoints);
+        gridPane1.addRouteOnGrid(routePoints, Color.RED);
     }//GEN-LAST:event_buttonLeftUpActionPerformed
 
     private void buttonLeftDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLeftDownActionPerformed
@@ -221,7 +221,7 @@ public class GridDebugFrame extends javax.swing.JFrame {
         
         System.out.println(routePoints);
         
-        gridPane1.addRouteOnGrid(routePoints);
+        gridPane1.addRouteOnGrid(routePoints, Color.RED);
     }//GEN-LAST:event_buttonLeftDownActionPerformed
 
     private void buttonRightDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRightDownActionPerformed
@@ -230,7 +230,7 @@ public class GridDebugFrame extends javax.swing.JFrame {
         
         System.out.println(routePoints);
         
-        gridPane1.addRouteOnGrid(routePoints);
+        gridPane1.addRouteOnGrid(routePoints, Color.RED);
     }//GEN-LAST:event_buttonRightDownActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -239,7 +239,7 @@ public class GridDebugFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void buttonDrawCircleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDrawCircleActionPerformed
-        gridPane1.addCircleOnGrid(Integer.parseInt(textX.getText()), Integer.parseInt(textY.getText()));
+        gridPane1.addCircleOnGrid(Integer.parseInt(textX.getText()), Integer.parseInt(textY.getText()), Color.RED, false);
     }//GEN-LAST:event_buttonDrawCircleActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed

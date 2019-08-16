@@ -349,8 +349,7 @@ public class LoginWindow extends javax.swing.JFrame {
                 
         if (tableFirstRow.get(2).equalsIgnoreCase(pass)) {
             //verified to be correct            
-            LocatorWindow.main(new String[0]);
-            this.dispose();
+            UserLocationWindow.main(new String[0], this);
         }
     }
     

@@ -38,5 +38,7 @@ public class Store implements Comparable<Store> {
     
     public Point getPoint() { return new Point(x, y); }
     
+    public String getPointString() { return ("(" + x + " ; " + y + ")"); }
+    
     public String getStoreName() { return storeName; }
 }

@@ -27,18 +27,18 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="jLabel1" pref="435" max="32767" attributes="0"/>
+                  <Component id="jLabel1" pref="422" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="sliderY" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="buttonSelectLocation" pref="400" max="32767" attributes="0"/>
+                          <Component id="buttonSelectLocation" max="32767" attributes="0"/>
                           <Component id="sliderX" max="32767" attributes="0"/>
                           <Component id="gridPane2" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -51,7 +51,7 @@
               <Component id="sliderX" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="sliderY" pref="400" max="32767" attributes="0"/>
+                  <Component id="sliderY" max="32767" attributes="0"/>
                   <Component id="gridPane2" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -90,6 +90,9 @@
         <Property name="snapToTicks" type="boolean" value="true"/>
         <Property name="value" type="int" value="2"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sliderXMouseReleased"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSlider" name="sliderY">
       <Properties>
@@ -100,6 +103,9 @@
         <Property name="value" type="int" value="2"/>
         <Property name="inverted" type="boolean" value="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sliderYMouseReleased"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="buttonSelectLocation">
       <Properties>
