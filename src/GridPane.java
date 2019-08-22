@@ -1,21 +1,18 @@
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import org.imgscalr.Scalr;
 /*
 THIS CLASS IS SACRED -- IT TOOK CRAZY AMOUNTS OF TIME TO MAKE
 so please don't touch it :)
@@ -40,6 +37,10 @@ public class GridPane extends JPanel {
         this.columns = columns;
     }
     
+    public GridPane(boolean drawBackground) {
+        this.drawBackground = drawBackground;
+    }
+    
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(400, 400); //the size of the grid -- 400 x 400 is a nice looking default
@@ -50,7 +51,31 @@ public class GridPane extends JPanel {
         super.paintComponent(gfx);
         
         Graphics2D gfx2d = (Graphics2D) gfx.create();
-                
+        
+        if (drawBackground) {
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(new File("map.jpg"));
+            }
+            catch (IOException ioex) {
+                ioex.printStackTrace();
+            }
+            
+            int scaledHeight = this.getHeight() + 25;
+
+            img = Scalr.resize(img, scaledHeight);
+
+            float alpha = 0.8f;
+            gfx2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+
+            gfx2d.drawImage(img, 1, 1, null);
+
+            alpha = 1f;
+            gfx2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+        }
+        
+        gfx2d.setFont(new Font("monospaced", Font.BOLD, 16));
+        
         xPoints.clear();
         yPoints.clear();
         
@@ -66,6 +91,7 @@ public class GridPane extends JPanel {
             int x = (getWidth() - (size * columns)) / 2;
                
             for (int vert = 0; vert < columns; vert++) {
+                gfx2d.setColor(Color.LIGHT_GRAY);
                 gfx2d.drawRect(x, y, size, size);
                 
                 xPoints.add(x);
@@ -76,6 +102,7 @@ public class GridPane extends JPanel {
             
             if (horz > 0) {
                 float xCoordOfString = (float) ((getWidth() - (size * columns)) / 2);
+                gfx2d.setColor(Color.WHITE);
                 gfx2d.drawString((horz + 1) + "", (float) (xCoordOfString + (0.075 * size)), (float) (y + (0.3 * size)));
             }
             

@@ -219,6 +219,16 @@ public class MapWindow extends javax.swing.JFrame {
         });
     }
     
+    private String genSpaces(String origText) {
+        String spaces = "";
+        
+        for (int i = 0; i < (7 - origText.length()); i++) {
+            spaces += " ";
+        }
+        
+        return spaces;
+    }
+    
     private void genText() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -229,7 +239,10 @@ public class MapWindow extends javax.swing.JFrame {
                 for (Store store : storeArray) {
                     allStoreNames += ("(" + i + ")   " + store.getStoreName() + "\n");
                     allStoreCoords += (store.getPointString() + "\n");
-                    allStoreDistances += ((Math.round(map.distanceToStore(store) * 100.0) / 100.0) + "km\n");
+                    
+                    String distancesSample = (Math.round(map.distanceToStore(store) * 100.0) / 100.0) + "";
+                    
+                    allStoreDistances += (distancesSample + genSpaces(distancesSample) + "km\n");
 
                     storeCoords.add(store.getPoint());
 
